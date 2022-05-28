@@ -1,8 +1,9 @@
-@extends("website.users.user_dashboard.layout.master")
+@extends('website.users.user_dashboard.layout.master')
 @section('content')
     <link rel="stylesheet" href="{{ asset('css/user_dashboard.css') }}">
 
     <link rel="stylesheet" href="{{ asset('css/user_offer.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/user_porto.css') }}">
 
     <section class="home">
         <div class="page_title">
@@ -16,12 +17,12 @@
                     </span>
 
                 </span>
-         
+
 
             </div>
 
         </div>
-        
+
         <div class='porto_container'>
 
 
@@ -31,11 +32,11 @@
                         <i class='bx bxs-edit'></i>
 
                     </a>
-                        <a href=''>
-                       تسليم المشروع
+                    <a href=''>
+                        تسليم المشروع
                     </a>
-                      <a href=''>
-                       الغاء المشروع
+                    <a href=''>
+                        الغاء المشروع
                     </a>
 
                 </div>
@@ -48,7 +49,7 @@
                             <i class='bx bx-time'></i> <span class='time'> 22/2/2 22:22pm
                             </span>
                         </div>
-                      
+
                     </div>
                 </div>
 
@@ -124,11 +125,11 @@
 
 
 
-<div>
+            <div>
 
 
 
-        </div>
+            </div>
 
-    
+
     </section>

@@ -31,7 +31,9 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="{{ asset('user_dash_assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- CSS Files -->
+
     <link id="pagestyle" href="{{ asset('user_dash_assets/css/soft-ui-dashboard.css') }}?v=1.0.3" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('auth_assets/project_assests/css/style.css ') }}">
 </head>
 
 <body class="g-sidenav-show rtl bg-gray-100">
@@ -49,7 +51,7 @@
         <hr class="horizontal dark mt-0">
         <div class="collapse navbar-collapse px-0 w-auto  max-height-vh-100 h-100" id="sidenav-collapse-main">
             <ul class="navbar-nav">
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link " href="{{ route('dashboard') }}">
                         <div
                             class="icon icon-shape icon-sm  border-radius-md bg-white text-center ms-2 d-flex align-items-center justify-content-center">
@@ -75,7 +77,7 @@
                         </div>
                         <span class="nav-link-text me-1"> الرئيسية</span>
                     </a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a class="nav-link " href="/profiles/{{ Auth::user()->id }}">
                         <div
@@ -106,6 +108,8 @@
                         <span class="nav-link-text me-1">ملفي الشخصي </span>
                     </a>
                 </li>
+                @if(Auth::user()->hasRole('seeker'))
+
                 <li class="nav-item">
                     <a class="nav-link " href="/My_projects">
                         <div
@@ -136,6 +140,7 @@
                         <span class="nav-link-text me-1"> مشاريعي </span>
                     </a>
                 </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link " href="/projects">
                         <div
@@ -166,6 +171,7 @@
                         <span class="nav-link-text me-1">تصفح المشاريع </span>
                     </a>
                 </li>
+                @if(Auth::user()->hasRole('provider'))
                 <li class="nav-item">
                     <a class="nav-link " href="/offers">
                         <div
@@ -196,6 +202,7 @@
                         <span class="nav-link-text me-1"> العروض </span>
                     </a>
                 </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link " href="{{ route('transactions') }}">
                         <div
@@ -221,33 +228,6 @@
                             </svg>
                         </div>
                         <span class="nav-link-text me-1">المحفظة</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link " href="pages/billing.html">
-                        <div
-                            class="icon icon-shape icon-sm  border-radius-md bg-white text-center ms-2 d-flex align-items-center justify-content-center">
-                            <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1"
-                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <title>credit-card</title>
-                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF"
-                                        fill-rule="nonzero">
-                                        <g transform="translate(1716.000000, 291.000000)">
-                                            <g transform="translate(453.000000, 454.000000)">
-                                                <path class="color-background opacity-6"
-                                                    d="M43,10.7482083 L43,3.58333333 C43,1.60354167 41.3964583,0 39.4166667,0 L3.58333333,0 C1.60354167,0 0,1.60354167 0,3.58333333 L0,10.7482083 L43,10.7482083 Z">
-                                                </path>
-                                                <path class="color-background"
-                                                    d="M0,16.125 L0,32.25 C0,34.2297917 1.60354167,35.8333333 3.58333333,35.8333333 L39.4166667,35.8333333 C41.3964583,35.8333333 43,34.2297917 43,32.25 L43,16.125 L0,16.125 Z M19.7083333,26.875 L7.16666667,26.875 L7.16666667,23.2916667 L19.7083333,23.2916667 L19.7083333,26.875 Z M35.8333333,26.875 L28.6666667,26.875 L28.6666667,23.2916667 L35.8333333,23.2916667 L35.8333333,26.875 Z">
-                                                </path>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <span class="nav-link-text me-1">الفواتير</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -277,7 +257,33 @@
                         <span class="nav-link-text me-1">التقارير</span>
                     </a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link " href="/logout">
+                        <div
+                            class="icon icon-shape icon-sm  border-radius-md bg-white text-center ms-2 d-flex align-items-center justify-content-center">
+                            <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title>credit-card</title>
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF"
+                                        fill-rule="nonzero">
+                                        <g transform="translate(1716.000000, 291.000000)">
+                                            <g transform="translate(453.000000, 454.000000)">
+                                                <path class="color-background opacity-6"
+                                                    d="M43,10.7482083 L43,3.58333333 C43,1.60354167 41.3964583,0 39.4166667,0 L3.58333333,0 C1.60354167,0 0,1.60354167 0,3.58333333 L0,10.7482083 L43,10.7482083 Z">
+                                                </path>
+                                                <path class="color-background"
+                                                    d="M0,16.125 L0,32.25 C0,34.2297917 1.60354167,35.8333333 3.58333333,35.8333333 L39.4166667,35.8333333 C41.3964583,35.8333333 43,34.2297917 43,32.25 L43,16.125 L0,16.125 Z M19.7083333,26.875 L7.16666667,26.875 L7.16666667,23.2916667 L19.7083333,23.2916667 L19.7083333,26.875 Z M35.8333333,26.875 L28.6666667,26.875 L28.6666667,23.2916667 L35.8333333,23.2916667 L35.8333333,26.875 Z">
+                                                </path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <span class="nav-link-text me-1">تسجيل الخروج</span>
+                    </a>
+                </li>
 
 
     </aside>
@@ -321,7 +327,7 @@
                             <li class="mb-2">
 
                                 <a class="dropdown-item border-radius-md" href="{{ $item->body }}">
-                 <div class="d-flex py-1">
+                                     <div class="d-flex py-1">
                                         <div class="my-auto">
                                             <img src="{{Auth::user()->image }}" class="avatar avatar-sm  ms-3 ">
                                         </div>
@@ -448,7 +454,7 @@
         let user_name=  "{{Auth::user()->name }}";
     </script>
     <script src="{{ asset('js/realtime_notification.js') }}" ></script>
-
+  
 
 </body>
 

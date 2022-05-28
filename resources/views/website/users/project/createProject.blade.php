@@ -5,8 +5,38 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 <link rel="stylesheet" href="{{ asset('auth_assets/project_assests/css/style.css ') }}">
+<style>
+    .bootstrap-select>.dropdown-toggle:after {
+        margin-top: 10px !important;
+        margin-left: 10px;
+        margin-right: 5px;
+    }
 
-@extends("website.layouts.master")
+    .bootstrap-select>.dropdown-toggle {
+        position: relative;
+        width: 100%;
+        text-align: right;
+        white-space: nowrap;
+        display: inline !important;
+        -ms-flex-pack: justify;
+
+    }
+
+    .bootstrap-select .dropdown-toggle .filter-option {
+        position: static;
+        top: 0;
+        left: 0;
+        float: left;
+        height: 100%;
+        width: 95%;
+        text-align: right;
+        margin-right: 20px;
+        overflow: hidden;
+        -webkit-box-flex: 0;
+    }
+
+</style>
+@extends('website.layouts.master')
 
 @section('content')
     <div class="loginContainer_2 sign-up-container up">
@@ -47,7 +77,7 @@
                                             <label> المهارات </label>
                                             <div class="w-100">
                                                 <select class="selectpicker w-100" name="skills[]" multiple
-                                                    aria-label="المهارات " data-live-search="true">
+                                                    aria-label="المهارات " data-live-search="true" title='اختر مهارة '>
                                                     @foreach ($data as $item)
                                                         <option value="{{ $item['id'] }}">{{ $item['title'] }}</option>
                                                     @endforeach

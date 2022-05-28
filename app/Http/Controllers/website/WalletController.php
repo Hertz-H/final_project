@@ -23,7 +23,7 @@ class WalletController extends Controller
         return view('website.users.wallet.index', compact('data', 'balance'));
     }
 
-// 
+    // 
     public function showWallets()
     {
         $data = DB::table('transactions')
@@ -43,6 +43,7 @@ class WalletController extends Controller
         $data = DB::table('transactions')
             ->where('payable_id', $user_id)
             ->get();
+
         // return response($transactions);
         // return view('website.users.offers.transactions', compact('data', 'balance'));
         return view('website.users.wallet.index', compact('data', 'balance'));

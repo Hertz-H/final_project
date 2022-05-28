@@ -19,13 +19,22 @@ class UserWork extends Model
 
 
     ];
-   //attachement
- public function sal_work_attach(){
-    return $this->hasMany(UserAttachment::class,'attach_id')->where('attach_type',3);
-}
-//user
-public function sal_user(){
+    //attachement
+    public function sal_work_attach()
+    {
+        return $this->hasMany(UserAttachment::class, 'attach_id')->where('attach_type', 3);
+    }
+    //user
+    public function sal_user()
+    {
 
-    return $this->belongsTo(User::class,'user_id')->where('is_active',1);
-}
+        return $this->belongsTo(User::class, 'user_id')->where('is_active', 1);
+    }
+
+
+    public function getFileAttribute($value)
+    {
+
+        return url('images/') . '/' . $value;
+    }
 }

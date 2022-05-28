@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 <link rel="stylesheet" href="{{ asset('auth_assets/project_assests/css/style.css ') }}">
 
-@extends("website.layouts.master")
+@extends('website.layouts.master')
 
 @section('content')
     <div class="loginContainer_2 sign-up-container up">
@@ -47,7 +47,7 @@
                                             <label> المهارات </label>
                                             <div class="w-100">
                                                 <select class="selectpicker w-100" name="skills[]" multiple
-                                                    aria-label="المهارات " data-live-search="true">
+                                                    title='اختر مهارة ' aria-label="المهارات " data-live-search="true">
                                                     @foreach ($data as $item)
                                                         <option value="{{ $item['id'] }}">{{ $item['title'] }}</option>
                                                     @endforeach

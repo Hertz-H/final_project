@@ -40,69 +40,72 @@ class OfferController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+
+            Validator::validate($request->all(), [
+
+                'price' => ['required', 'numeric', 'gt:0'],
+                'duration' => ['required', 'numeric', 'gt:0'],
+                'description' =>  array(
+                    'required',
+                ),
 
 
-        Validator::validate($request->all(), [
+            ], [
 
-            'price' => ['required', 'numeric', 'gt:0'],
-            'duration' => ['required', 'numeric', 'gt:0'],
-            'description' =>  array(
-                'required',
-            ),
+                'price.required' => 'يجب ادخال السعر ',
+                'price.numeric' => 'يجب ادخال رقم ',
+                'price.gt' => 'يجب ادخال قيمة موجبة   ',
+                'duration.required' => 'يجب ادخال المدة ',
+                'duration.gt' => 'يجب ادخال قيمة موجبة   ',
+                'duration.numeric' => 'يجب ادخال رقم ',
+                'description.required' => 'يجب أدخال تفاصيل العرض  ',
 
-
-        ], [
-
-            'price.required' => 'يجب ادخال السعر ',
-            'price.numeric' => 'يجب ادخال رقم ',
-            'price.gt' => 'يجب ادخال قيمة موجبة   ',
-            'duration.required' => 'يجب ادخال المدة ',
-            'duration.gt' => 'يجب ادخال قيمة موجبة   ',
-            'duration.numeric' => 'يجب ادخال رقم ',
-            'description.required' => 'يجب أدخال تفاصيل العرض  ',
-
-        ]);
-        $model = new Offer;
-        $model->price = $request->price;
-        $model->net_price = $request->price;
-        $website_precentage = $model->price / 10;
-        $model->net_price = $model->price - $website_precentage;
-        $project_id = $request->project_id;
-        $model->duration = $request->duration;
-        $model->provider_id = Auth::User()->id; //Auth_id
-        $model->project_id = $project_id;
-        $model->status = 1;
-        $model->description = $request->description;
-        // }
-        if ($model->save()) {
+            ]);
+            $model = new Offer;
+            $model->price = $request->price;
+            $model->net_price = $request->price;
+            $website_precentage = $model->price / 10;
+            $model->net_price = $model->price - $website_precentage;
+            $project_id = $request->project_id;
+            $model->duration = $request->duration;
+            $model->provider_id = Auth::User()->id; //Auth_id
+            $model->project_id = $project_id;
+            $model->status = 1;
+            $model->description = $request->description;
+            // }
+            if ($model->save()) {
 
 
-            if ($request->hasFile('files')) {
+                if ($request->hasFile('files')) {
 
-                foreach ($request->file('files') as $file) {
-                    $Attachments = new UserAttachment;
-                    $Attachments->attach_id = $model->id;
-                    $Attachments->attach_type = '2';
-                    $fileNme = time() . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('images'), $fileNme);
-                    $Attachments->file_name = $fileNme;
-                    $Attachments->file_type = $file->getClientOriginalExtension();
-                    $Attachments->user_id = $model->provider_id;
-                    $Attachments->save();
+                    foreach ($request->file('files') as $file) {
+                        $Attachments = new UserAttachment;
+                        $Attachments->attach_id = $model->id;
+                        $Attachments->attach_type = '2';
+                        $fileNme = time() . '.' . $file->getClientOriginalExtension();
+                        $file->move(public_path('images'), $fileNme);
+                        $Attachments->file_name = $fileNme;
+                        $Attachments->file_type = $file->getClientOriginalExtension();
+                        $Attachments->user_id = $model->provider_id;
+                        $Attachments->save();
+                    }
                 }
+
+                if (Auth::check()) {
+                    $data = ['receiver_id' => $request->project_owner, 'sender_id' =>  $model->provider_id, 'title' => 'title of notify', 'is_read' => 0, 'message' => '   تم اضافة عرض جديد على مشروعك', 'link' => "/projects/$model->project_id->id#offer$model->id"];
+
+                    NotificationController::hiNotification($data);
+                }
+
+
+
+                return redirect()->back()->with(['success' => 'تم اضافة البيانات بنجاح']);
+            } else {
+                return redirect()->back()->with(['error' => 'لم يتم اضافة البيانات ']);
             }
-
-            if (Auth::check()) {
-                $data = ['receiver_id' => $request->project_owner, 'sender_id' =>  $model->provider_id, 'title' => 'title of notify', 'is_read' => 0, 'message' => '   تم اضافة عرض جديد على مشروعك', 'link' => "/projects/$model->project_id->id#offer$model->id"];
-
-                NotificationController::hiNotification($data);
-            }
-
-
-
-            return redirect()->back()->with(['success' => 'تم اضافة البيانات بنجاح']);
-        } else {
-            return redirect()->back()->with(['error' => 'لم يتم اضافة البيانات ']);
+        } catch (Exception $e) {
+            abort(500);
         }
     }
 
@@ -169,7 +172,7 @@ class OfferController extends Controller
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://waslpayment.com/api/test/merchant/payment_order",
+                CURLOPT_URL => "https://waslpayment.com/api/v1/merchant/payment_order",
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
@@ -179,8 +182,8 @@ class OfferController extends Controller
                 CURLOPT_POSTFIELDS => json_encode($data),
 
                 CURLOPT_HTTPHEADER => array(
-                    "private-key: rRQ26GcsZzoEhbrP2HZvLYDbn9C9et",
-                    "public-key: HGvTMLDssJghr9tlN9gr4DVYt0qyBy",
+                    "private-key: GTHkFRiJ1ULpTCLwmwvIUFRgnQU6j9kD2MHfGVsBprhPRk0vLd",
+                    "public-key: gIhvKtDbJ9rejHwu0KxmhoKMU",
                     "Content-Type:  application/x-www-form-urlencoded"
 
 
@@ -311,7 +314,8 @@ class OfferController extends Controller
             $data = DB::table('transactions')
                 ->where('payable_id', Auth::user()->id)
                 ->get();
-            return view('website.users.wallet.index', compact('data', 'balance'));
+            $success_deposite =  ' تمت ايداع مبلغ ' . '$' . $offer->price . ' الى محفظتك  مقابل ' . $offer->sal_project_id->title . ' ، سيتم سحبها من محفظتك بعد تأكيد استلامك للعمل ';
+            return view('website.success', compact('data', 'balance', 'success_deposite'));
 
             // return redirect()->route('')->with(['success' => 'تم تعديل البيانات بنجاح']);
         } else {
@@ -384,7 +388,7 @@ class OfferController extends Controller
                 $daysForDelivery = $data->duration + 2;
                 $data->sal_project_id->start_date = \Carbon\Carbon::now();
                 $data->sal_project_id->end_date = \Carbon\Carbon::now()->addDay($data->duration);
-                $data->sal_project_id->delivery_date = \Carbon\Carbon::now()->addDay($daysForDelivery);
+                // $data->sal_project_id->delivery_date = \Carbon\Carbon::now()->addDay($daysForDelivery);
 
                 //project is in excution
                 if ($data->save() && $data->sal_project_id->save()) {
@@ -475,6 +479,7 @@ class OfferController extends Controller
                 $review->to_id = $offer->provider_id; //done working and seeker confirm
 
                 $offer->sal_project_id->status = 5; //close project
+                $offer->sal_project_id->delivery_date = \Carbon\Carbon::now();
                 $order = Order::where('offer_id', $offer->id)->where('status', 1)->first();
                 $Admin_percentage = $offer->price - $offer->net_price;
                 $provider_percentage = $offer->net_price;

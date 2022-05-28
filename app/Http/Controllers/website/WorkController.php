@@ -19,10 +19,10 @@ class WorkController extends Controller
      */
     public function index()
     {
-       
+
         $data = UserWork::with(['sal_user', 'sal_work_attach'])->where('user_id', Auth::user()->id)->where('is_active', 1)->get();
         $works = user::with(['sal_works', 'sal_skills', 'sal_profile'])->find(Auth::user()->id);
-       
+
 
         return view('website.users.works.index')->with('data', $data);
     }
@@ -30,7 +30,7 @@ class WorkController extends Controller
 
     public function create()
     {
-       
+
         return view('website.users.works.create');
     }
 
@@ -43,13 +43,13 @@ class WorkController extends Controller
                 'required',
                 'min:2',
 
-             
+
             ),
 
 
             'description' =>  array(
                 'required',
-              
+
             )
 
 
@@ -57,15 +57,16 @@ class WorkController extends Controller
             'title.required' => 'يجب ادخال عنوان المشروع',
             'title.min' => 'لا يقل  عن 3 حروف',
 
-           
+
             'description.required' => 'يجب أدخال وصف المشروع ',
-          
+
         ]);
-        if ($request->image) {
+
+        if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
         } else {
-            $imageName = 'user_avater.png';
+            $imageName = 'user_work.jpeg';
         }
         $works = new UserWork();
         $works->title = $request->title;
@@ -83,23 +84,22 @@ class WorkController extends Controller
                 if ($request->hasFile('files')) {
                     foreach ($request->file('files') as $file) {
                         $Attachments = new UserAttachment;
-                        $Attachments->attach_id =$works->id;
+                        $Attachments->attach_id = $works->id;
                         $Attachments->attach_type = '3';
                         $fileNme = time() . '.' . $file->getClientOriginalExtension();
                         $file->move(public_path('images'), $fileNme);
                         $Attachments->file_name = $fileNme;
                         $Attachments->file_type = $file->getClientOriginalExtension();
-                        $Attachments->user_id =$works->user_id;
+                        $Attachments->user_id = $works->user_id;
                         $Attachments->save();
                     }
                 }
-                return redirect('profiles/' . Auth::user()->id)->with(['success' => ' تم اضافة عمل جديد ']);
-            } else {
-                return redirect()->back()->with(['error' => 'لم يتم حفظ البيانات ']);
             }
+
+            return redirect('profiles/' . Auth::user()->id)->with(['success' => 'تم حفظ البيانات ']);
+        } else {
+            return redirect('profiles/' . Auth::user()->id)->with(['error' => 'لم يتم حفظ البيانات ']);
         }
-
-
     }
 
     public function work_data($id)
@@ -145,16 +145,16 @@ class WorkController extends Controller
             'title.required' => 'يجب ادخال عنوان المشروع',
             'title.min' => 'لا يقل  عن 3 حروف',
 
-           
+
 
             'description.required' => 'يجب أدخال وصف المشروع ',
-            
+
         ]);
-        if ($request->image) {
+        if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
         } else {
-            $imageName = $request->imageold;
+            $imageName = 'user_work.jpeg';
         }
         $works = UserWork::find($id);
         $works->title = $request->title;
@@ -170,23 +170,21 @@ class WorkController extends Controller
                 if ($request->hasFile('files')) {
                     foreach ($request->file('files') as $file) {
                         $Attachments = new UserAttachment;
-                        $Attachments->attach_id =$works->id;
+                        $Attachments->attach_id = $works->id;
                         $Attachments->attach_type = '3';
                         $fileNme = time() . '.' . $file->getClientOriginalExtension();
                         $file->move(public_path('images'), $fileNme);
                         $Attachments->file_name = $fileNme;
                         $Attachments->file_type = $file->getClientOriginalExtension();
-                        $Attachments->user_id =$works->user_id;
+                        $Attachments->user_id = $works->user_id;
                         $Attachments->save();
                     }
                 }
-            } else {
-
             }
-
+            return redirect('profiles/' . Auth::user()->id)->with(['success' => 'تم تعديل البيانات بنجاح']);
+        } else {
+            return redirect('profiles/' . Auth::user()->id)->with(['error' => 'لم يتم تعديل البيانات بنجاح']);
         }
-        return redirect('profiles/'.Auth::user()->id)->with(['success' => 'تم تعديل البيانات بنجاح']);
-
     }
     /**
      * Remove the specified resource from storage.

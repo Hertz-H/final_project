@@ -30,7 +30,8 @@
 
                         <li>
                             <div class=''><a href='/profiles/{{ Auth::user()->id }}' class='btn_img'>
-                                    <div class='img_profile'><img src='{{ asset('img/1.png') }}'></div>
+                                    <div class='img_profile' style="border-radius: 50%"><img
+                                            src='{{ Auth::user()->image }}'></div>
                                 </a></div>
                         @endauth
                         @guest

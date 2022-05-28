@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="{{ asset('auth_assets/project_assests/css/project_card.css ') }}">
+<link rel="stylesheet" href="{{ asset('auth_assets/project_assests/css/style.css ') }}">
 <link rel="stylesheet" href="{{ asset('css/model.css ') }}">
 
 
@@ -93,12 +94,17 @@
         color: #186d80;
     }
 
+    .status span {
+        border-radius: 3px;
+        /* color: white !important; */
+    }
+
 </style>
 @extends('website.layouts.master_dash')
 @section('content')
     <!-- End Navbar -->
-    <div class="container-fluid mt-5 ">
-        <div class="page-header min-height-300 border-radius-xl mt-4 text-center text-white d-flex justify-content-center"
+    <div class="container-fluid mt-2 ">
+        <div class="page-header min-height-150 border-radius-xl mt-2 text-center text-white d-flex justify-content-center"
             style="">
             <span class="mask bg-gradient-dark"></span>
             <div class='text-center' style='z-index:12'>
@@ -134,11 +140,11 @@
                     <div class="card h-100 ">
                         <div class="">
                             <a href="projects/{{ $item->id }}">
-                                <div class="personal_info_container myworks" style="width: auto;height:415px">
+                                <div class="personal_info_container myworks" style="width: auto;max-height:415px">
                                     <div class="container_card">
                                         <div class="">
                                             <h2 class="h4"> {{ Str::substr($item->title, 0, 15) }}
-                                                ....
+
                                             </h2>
                                             <div class='mt-3 mb-3'>
                                                 <div class="flex  align-items-baseline gap-2">
@@ -158,61 +164,74 @@
 
                                             <div>
                                                 {{ Str::substr($item->description, 0, 50) }}
-                                                ...معرفة المزيد
+                                                ...
 
 
                                             </div>
                                             <div class="liks_shows">
                                                 <ul class="d-grid w-100 gap-1 pe-0">
-                                                    <div class='d-flex w-100 justify-content-between align-items-center'>
-                                                        <div>
-                                                            <li>
 
-                                                                <span class="price"> {{ $item->price }}$</span>
-
-                                                            </li>
-                                                        </div>
-
-                                                        <div>
-
-                                                            <span> الفترة</span>
-                                                            :
-                                                            <span> {{ $item->duration }}يوم</span>
-
-                                                            </li>
-
-
-
-                                                        </div>
-                                                    </div>
 
                                                     <li class='d-flex gap-2'>
                                                         <a href="" class="status">
                                                             الحالة:
                                                             @if ($item->status == 1)
-                                                                <span style="    color: #3a416f;
-        background: #4fc3f796;
-        padding: 1px 12px;">مفتوح</span>
+                                                                <span style="        background: #a0d0e0;
+                                                                                        padding: 1px 12px;
+                                                                                        border-radius: 3px;
+                                                                                        color: white;">مفتوح</span>
                                                             @elseif($item->status == 0)
-                                                                <span style="    color: #3a416f;
-        background: #fce4ec;
-        padding: 1px 12px;">: معلق </span>
+                                                                <span
+                                                                    style="    color: #3a416f;
+                                                                                                                        background: #fce4ec;
+                                                                                                                        padding: 1px 12px;">:
+                                                                    معلق
+                                                                </span>
                                                             @elseif($item->status == 2)
-                                                                <span style="    color: #3a416f;
-        background: #4fc3f796;
-        padding: 1px 12px;">قيد التنفيذ </span>
+                                                                <span style="        background: #a0d0e0;
+                                                                                    padding: 1px 12px;
+                                                                                    border-radius: 3px;
+                                                                                    color: white;">قيد
+                                                                    التنفيذ
+                                                                </span>
                                                             @elseif($item->status == 3)
-                                                                <span style="    color: #3a416f;
-        background: #f1f8e9;
-        padding: 1px 12px;">تم التسليم</span>
+                                                                <span style="       background: #a5d6a7;
+                                                                        padding: 1px 12px;
+                                                                        border-radius: 3px;
+                                                                        color: white;">تم
+                                                                    التسليم</span>
                                                             @elseif($item->status == 4)
-                                                                <span style="    color: #3a416f;
-        background: #fce4ec;
-        padding: 1px 12px;">لا يتلقى عروض</span>
+                                                                <span style="     background: #f6bed1;
+                                                                            padding: 1px 12px;
+                                                                            border-radius: 3px;
+                                                                            color: white;">لا
+                                                                    يتلقى
+                                                                    عروض</span>
                                                             @elseif($item->status == 5)
+                                                                <span style="    background: #f6bed1;
+                                                                            padding: 1px 12px;
+                                                                            border-radius: 3px;
+                                                                            color: white;">مغلق</span>
+                                                            @elseif($item->status == 6)
+                                                                <span style="    background: #f6bed1;
+                                                                            padding: 1px 12px;
+                                                                            border-radius: 3px;
+                                                                            color: white;">رفضت التسليم</span>
+                                                            @elseif($item->status == 7)
                                                                 <span style="    color: #3a416f;
-        background: #fce4ec;
-        padding: 1px 12px;">مغلق</span>
+                                                                            background: #ea06065e;
+                                                                            padding: 1px 12px; color:white">عليه
+                                                                    شكوى</span>
+                                                            @elseif($item->status == 6)
+                                                                <span style="    color: #3a416f;
+                                                                                    background: #ea06065e;
+                                                                                    padding: 1px 12px; color:white">رفضت
+                                                                    التسليم</span>
+                                                            @elseif($item->status == 8)
+                                                                <span style="    background: #f6bed1;
+                                                                            padding: 1px 12px;
+                                                                            border-radius: 3px;
+                                                                            color: white;">حُل النزاع</span>
                                                             @endif
                                                         </a>
                                                     </li>
@@ -228,7 +247,8 @@
 
                                         <div class="liks_shows">
                                             @if ($item->status == 0 || $item->status == 1)
-                                                <a href="{{ route('projects.edit', $item->id) }}" class="show_more">
+                                                <a href="{{ route('projects.edit', $item->id) }}" class="show_more"
+                                                    style=" background-color: #186d80;text-align:center; padding:7px 0px;">
                                                     تعديل
                                                 </a>
                                             @else

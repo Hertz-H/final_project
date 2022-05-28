@@ -8,6 +8,13 @@
 <style>
     a {
         text-decoration: none;
+        /* display: inline-block;
+        padding: 3px 5px !important; */
+    }
+
+    .action {
+        background-color: var(--primary) !important;
+        color: white !important;
     }
 
     .note {
@@ -111,6 +118,27 @@
         margin: 0 !important;
     }
 
+    /* .add_offer {
+        background-color: var(--primary);
+        color: white;
+        border-radius: 3px;
+    } */
+    .btn-outline-primary {
+        background: #1f95b1;
+        border-color: #1f95b1;
+        color: white;
+        border-radius: 3px;
+        /* flex: 1 1 auto; */
+    }
+
+    .btn-outline-primary:hover:not(.active) {
+        background-color: #cce5ed;
+        opacity: .75;
+        box-shadow: none;
+        color: #1f95b1;
+        border-color: #1f95b1;
+    }
+
 </style>
 @extends('website.layouts.master')
 
@@ -120,10 +148,10 @@
 
         <div class="page-header min-height-300 border-radius-xl  mt-1 mb-3 d-flex justify-content-center align-items-center "
             style="min-height: 70px !important;
-                                                                                                                                                                    border-right: 4px solid #5ab1c5;
-                                                                                                                                                                    border-radius: 4px;background-color: white;
-                                                                                                                                                       padding: 10px 10px;
-                                                                                                                                                                    ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border-right: 4px solid #5ab1c5;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border-radius: 4px;background-color: white;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       padding: 10px 10px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ">
             <h6 class='text-center'> {{ $data['title'] }} </h6>
 
         </div>
@@ -184,7 +212,7 @@
                     </div>
                 </div>
                 <!-- اضافة عرض
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                -->
 
                 @if ($canMakeOffer && $data->status == 1)
                     <div class="">
@@ -217,7 +245,8 @@
                                     <input id="face" name="price" type="text" class="form-control">
 
 
-                                    <small class="text-danger">سوف تكون مستحقاتك 12.00$ بعد خصم عمولة موقع مستقل</small>
+                                    <small class="text-danger">سوف سيتم احتساب مستحقاتك بعد خصم 10% عمولة موقع انجز لي
+                                    </small>
 
                                     @error('price')
                                         <small class="text-danger">{{ $message }}*</small>
@@ -269,7 +298,7 @@
 
 
                                 <div class="text-start mt-3">
-                                    <button class="show_more " type='submit'> اضف عرضك</button>
+                                    <button class="show_more btn-outline-primary" type='submit'> اضف عرضك</button>
                                 </div>
 
                             </form>
@@ -304,7 +333,7 @@
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="d-flex align-items-start">
                                                     <div class="img_con">
-
+                                                        <img src="{{ $offer->sal_provider_by->image }}" alt="">;
                                                     </div>
                                                     <div class="container_card">
                                                         <header class="">
@@ -346,7 +375,7 @@
                                                                         //         $time=$days. يوم
                                                                         //     }
                                                                         //     elseif( $hours>0){
-                                                                        //         $time=$days. ساعة
+                                                                        //         $time=$hours. ساعة
                                                                         //     }
                                                                         //     elseif( $minutes>0){
                                                                         //         $time= $minutes. دقيقة
@@ -390,8 +419,8 @@
                                                     @if (Auth::user()->id == $offer->provider_id && $offer->status == 1 && $data->status == 1)
                                                         <div class="select">
                                                             <a href="{{ route('offers.edit', $offer->id) }}"
-                                                                style="color:black ;text-decoration:none"
-                                                                class="note"> تعديل</a>
+                                                                style="style=border:none;padding:3px 7px; border-radius:2px"
+                                                                class="note action "> تعديل</a>
 
                                                         </div>
                                                         {{-- if the user is the publisher of the project let hime 
@@ -402,12 +431,12 @@
                                                             @csrf
                                                             <input style="display:none" type="text" name="offer_id"
                                                                 value='{{ $offer->id }}'>
-                                                            <button style="color:black ;border:none" type='submit '
-                                                                class="note"> قبول العرض</button>
+                                                            <button class='action '
+                                                                style="border:none;padding:3px 7px; border-radius:2px"
+                                                                type='submit ' class="note"> قبول العرض</button>
 
                                                         </form>
-                                                        <a href="{{route('chats_with',[$offer->provider_id,$data->id ])}}"><button style="color:black ;border:none" type='submit '
-                                                            class="note">  دردشة</button></a>
+
                                                         {{-- if the user is the publisher of the project let him
                                                      accept and reject the accepted once  before the offer last confirmation --}}
                                                         {{-- cancel offer will return the offer to the default status which is 1 --}}
@@ -425,18 +454,37 @@
                                                                 value='{{ $data['user_id'] }}'>
                                                             <input style="display:none" type="text" name="project_id"
                                                                 value='{{ $data['id'] }}'>
-                                                            <button style="color:black ;border:none" type='submit '
-                                                                class="note"> الغاء الموافقة </button>
+                                                            <button style="border:none;padding:3px 7px; border-radius:2px"
+                                                                type='submit ' class="note action"> الغاء الموافقة
+                                                            </button>
                                                         </form>
+                                                        <a
+                                                            href="{{ route('chats_with', [$offer->provider_id, $data->id]) }}">
+
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                                fill="currentColor" class="bi bi-chat"
+                                                                viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
+                                                            </svg>
+                                                        </a>
                                                     @elseif(Auth::user()->id == $data['user_id'] && $offer->status == 4)
                                                         <a style="color:black;text-decoration:none"
-                                                            class="status ">تم
+                                                            class="status  ">تم
                                                             رفضه</a>
                                                         {{-- <a href="" style="color:black"> الغاء  الموافقة</a> --}}
 
                                                         {{-- @elseif(Auth::user()->id==$data['user_id']&&$offer->status==4)
                                             <a style="color:black">ملغي</a> --}}
-                                                    @elseif((Auth::user()->id == $data['user_id'] && $offer->status == 3 && $data->status == 2) || Auth::user()->id == $data->handled_by)
+                                                    @elseif($offer->status == 3 && $data->status == 2 && (Auth::user()->id == $data['user_id'] || Auth::user()->id == $data->handled_by))
+                                                        <a
+                                                            href="{{ route('chats_with', [$offer->provider_id, $data->id]) }}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                                fill="currentColor" class="bi bi-chat"
+                                                                viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
+                                                            </svg></a>
                                                         <a style="color:black" class="status">قيد التنفيذ </a>
 
                                                         {{-- if the seeker receives the work so that the project is delivered closed and the offer is closed --}}
@@ -455,14 +503,23 @@
                                                                 class="note"> تأكيد الاستلام </button>
                                                         </form> --}}
                                                         <a href="{{ route('reject', $offer->id) }}">
-                                                            <button style="color:white ;border:none" class="btn btn-primary"
-                                                                type='submit ' class="note"> رفض الاستلام</button>
+                                                            <button style="color:white ;border:none"
+                                                                class="btn btn-primary action" type='submit '
+                                                                class="note action"> رفض الاستلام</button>
                                                         </a>
-                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                        <button type="button" class="btn btn-primary action"
+                                                            data-bs-toggle="modal"
                                                             data-bs-target="#confirmDeliver{{ $offer->id }}">
                                                             تأكيد الاستلام
                                                         </button>
-
+                                                        <a
+                                                            href="{{ route('chats_with', [$offer->provider_id, $data->id]) }}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                                fill="currentColor" class="bi bi-chat"
+                                                                viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
+                                                            </svg></a>
                                                         <!-- Modal -->
                                                         <div class="modal fade" id="confirmDeliver{{ $offer->id }}"
                                                             aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
@@ -538,11 +595,23 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    @elseif (Auth::user()->id == $data['user_id'] && $offer->status == 3 && $data->status == 6)
+                                                    @elseif ($offer->status == 3 && $data->status == 6 && (Auth::user()->hasRole('Admin') || Auth::user()->id == $data['user_id']))
+                                                        <a
+                                                            href="{{ route('chats_with', [$offer->provider_id, $data->id]) }}">
+
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                                fill="currentColor" class="bi bi-chat"
+                                                                viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
+                                                            </svg>
+                                                        </a>
                                                         <a style="color:black" class="status">رفضت استلامه </a>
-                                                    @elseif(Auth::user()->id == $data['user_id'] && $offer->status == 3 && $data->status == 7)
+                                                    @elseif($offer->status == 3 && $data->status == 7 && (Auth::user()->hasRole('Admin') || Auth::user()->id == $data['user_id']))
                                                         <a style="color:black" class="status"> رفعت شكوى </a>
-                                                    @elseif ((Auth::user()->id == $data['user_id'] && $offer->status == 3 && $data->status == 5) || Auth::user()->id == $data->handled_by)
+                                                    @elseif($offer->status == 3 && $data->status == 8 && (Auth::user()->hasRole('Admin') || Auth::user()->id == $data['user_id']))
+                                                        <a style="color:black" class="status"> حُل النزاع </a>
+                                                    @elseif ($offer->status == 3 && $data->status == 5 && (Auth::user()->id == $data['user_id'] || Auth::user()->id == $data->handled_by))
                                                         <a style="color:black" class="status">مغلق </a>
                                                     @endif
                                                 @endif
@@ -576,12 +645,16 @@
                                                 <a style="color:black" class="status">تم التسليم  </a> 
                                           @endif --}}
                                             @if (Auth()->check())
-                                                @if (Auth::user()->id == $data['user_id'] || Auth::user()->id == $offer->provider_id)
-                                                    السعر <span class="desc">
-                                                        {{ $offer->price }}
+                                                @if (Auth::user()->id == $data['user_id'] || Auth::user()->id == $offer->provider_id || Auth::user()->hasRole('Admin'))
+                                                    <div class="status "
+                                                        style="background-color:#5ab1c5,color:white; padding:20px;text-align:center;width:100%;font-size:1.3rem;font-weight:bold">
+                                                        السعر <span class="desc ms-5 "> :
+                                                            {{ $offer->price }}$
 
-                                                    </span>
-                                                    المدة <span class="desc"> {{ $offer->duration }}</span>
+                                                        </span>
+                                                        المدة <span class="desc ms-3">: {{ $offer->duration }}
+                                                            يوم</span>
+                                                    </div>
                                                     <div class="desc"> {{ $offer->description }}</div>
                                                     <ul
                                                         class="list-unstyled mb-0 list-unstyled job_det attachment_contianer">
@@ -715,7 +788,7 @@
                     <div class="d-flex align-items-flex-start">
                         <div class="img_con">
                             <img src="
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @if ($data->sal_created_by->image != null) {{ $data->sal_created_by->image }} @endif"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @if ($data->sal_created_by->image != null) {{ $data->sal_created_by->image }} @endif"
                                 alt="">
                         </div>
                         <div class="container_card">

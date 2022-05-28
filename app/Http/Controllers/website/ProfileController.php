@@ -13,6 +13,7 @@ use App\Models\Skill;
 use App\Models\user;
 use App\Models\userSkill;
 use App\Models\UserWork;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -23,10 +24,11 @@ class ProfileController extends Controller
     //show providers
     public function index()
     {
-        $profiles = Roleuser::with(['user.sal_review_to'])->where([['role_id', 3]])->paginate(3);
+        $profiles = Roleuser::with(['user.sal_review_to'])->where([['role_id', 3]])->paginate(12);
         foreach ($profiles as $profile) {
             $profile->user['ratings'] = $profile->user->sal_review_to()->avg('rate');
         }
+        // return response($profiles);
         return view('website.users.profile.index')->with('data', $profiles);
     }
     //show one provider
@@ -57,63 +59,102 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
+
+
+
         Validator::validate($request->all(), [
-            'phone' => ['required', 'digits:14'],
+            'phone' => ['required', 'min:9', 'numeric'],
             'country' => ['required'],
             'major' => [''],
             'role' => ['required'],
-            'tweeter' => ['url'],
-            'facebook' => ['url'],
-            'github' => ['url'],
+            'birth_date' => ['required'],
+            // 'tweeter' => ['url'],
+            // 'facebook' => ['url'],
+            // 'github' => ['url'],
             'Job_title' => [''],
-            'describe' => ['required', 'min:50 ']
+            'describe' => ['required']
         ], [
             'phone.required' => 'يرجى ادخال رقم التلفون ',
-            'phone.digits' => 'يرجى ادخال رقم التلفون ',
+            'phone.numeric' => 'يرجى ادخال رقم  ',
+            'phone.min' => '  لا يقل رقم التلفون عن 9 أرقام  ',
+            'birth_date.required' => '  يجب ادخال تأريخ الميلاد ',
             'country.required' => 'يرجى ادخال الدولة ',
             'role.required' => 'يرجى ادخال نوع الاستخدام ',
             'describe.required' => 'يرجى ادخال وصف عنك',
-            'tweeter.url' => 'يرجى ادخال عنوان حساب تويتر بشكل صحيح ',
-            'facebook.url' => 'يرجى ادخال عنوان حساب فيسبوك بشكل صحيح ',
-            'github.url' => 'يرجى ادخال عنوان حساب جيت هب بشكل صحيح ',
-            'describe.min' => 'يجب ان يكون الوصف اكثر  من 70 حرف',
+            // 'tweeter.url' => 'يرجى ادخال عنوان حساب تويتر بشكل صحيح ',
+            // 'facebook.url' => 'يرجى ادخال عنوان حساب فيسبوك بشكل صحيح ',
+            // 'github.url' => 'يرجى ادخال عنوان حساب جيت هب بشكل صحيح ',
+            // 'describe.min' => 'يجب ان يكون الوصف اكثر  من 70 حرف',
             'phone.required' => ' يرجى ادخال رقم التلفون بشكل صحيح حجمه 14رقم   ',
         ]);
-        if ($request->image) {
+
+        if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
         } else {
-            $imageName = 'user_avater.png';
+            // if ($request->gender == 1) {
+            $imageName = 'user_avatar.png';
+            // } else {
+
+            // }
         }
+
         user::where('id', Auth::user()->id)->update(['image' => $imageName]);
-
-        $profile = profile::create([
-            'phone' => $request->phone, 'gander' => $request->gander, 'birth_date' => $request->birth_date,
-            'country' => $request->country, 'major' => $request->major, 'user_id' => Auth::user()->id,
-            'Job_title' => $request->Job_title, 'image' => $imageName, 'description' => $request->describe, 'facebook' => $request->facebook, 'tweeter' => $request->tweeter, 'github' => $request->github
-        ]);
-        foreach ($request->skills as $skill) {
-            $userSkill = new userSkill;
-            $userSkill->user_id = Auth::user()->id;
-            $userSkill->skill_id = $skill;
-            $userSkill->save();
+        $profile = new Profile;
+        $profile->phone = $request->phone;
+        $profile->birth_date = $request->birth_date;
+        $profile->country = $request->country;
+        $profile->major = $request->major;
+        $profile->user_id = Auth::user()->id;
+        $profile->Job_title = $request->Job_title;
+        if ($request->gander) {
+            $profile->gander = $request->gander;
         }
-        if (sizeof($request->role) > 0) {
-            foreach ($request->role as $r) {
-                Auth::user()->attachRole($r);
+        $profile->description = $request->describe;
+        if ($request->facebook) {
+            $profile->facebook = $request->facebook;
+        }
+        if ($request->tweeter) {
+            $profile->tweeter = $request->tweeter;
+        }
+        if ($profile->github) {
+            $profile->github = $request->github;
+        }
+        if ($profile->save()) {
+            if ($request->skills[0] != '') {
+                foreach ($request->skills as $skill) {
+                    $userSkill = new userSkill;
+                    $userSkill->user_id = Auth::user()->id;
+                    $userSkill->skill_id = $skill;
+                    $userSkill->save();
+                }
             }
-            return redirect('profiles/' . Auth::user()->id)->with('success', 'تم حفظ البيانات' );
-
+            if (sizeof($request->role) > 0) {
+                foreach ($request->role as $r) {
+                    Auth::user()->attachRole($r);
+                }
+                return redirect('profiles/' . Auth::user()->id)->with('success', 'تم حفظ البيانات');
+            }
+            return redirect()->route('profiles.show', Auth::user()->id)->with('success', '  تم اضافة ملفك الشخصي  ');
+        } else {
+            return response($profile);
         }
-
-
-        return redirect()->route('profiles.show', Auth::user()->id)->with('success', '  تم اضافة ملفك الشخصي  ');
     }
 
 
     public function show($id)
     {
-        return view('website.users.profile.show', ['data' => user::find($id)]);
+        try {
+
+            $data = user::with(['sal_profile'])->find($id);
+            if ($data->sal_profile != null) {
+                return view('website.users.profile.show', ['data' => $data]);
+            } else {
+                abort(404);
+            }
+        } catch (Exception $e) {
+            abort(404);
+        }
     }
 
     public function edit($id)
@@ -127,46 +168,59 @@ class ProfileController extends Controller
     public function update(Request $request, $id)
     {
         Validator::validate($request->all(), [
-            'phone' => ['required', 'digits:14'],
+            'phone' => ['required', 'min:9', 'numeric'],
+            'country' => ['required'],
             'major' => [''],
-            'tweeter' => ['url'],
-            'facebook' => ['url'],
-            'github' => ['url'],
+            'role' => ['required'],
+            'birth_date' => ['required'],
+            // 'tweeter' => ['url'],
+            // 'facebook' => ['url'],
+            // 'github' => ['url'],
             'Job_title' => [''],
-            'describe' => ['required', 'min:50']
+            // 'describe' => ['required']
         ], [
             'phone.required' => 'يرجى ادخال رقم التلفون ',
-            'describe.required' => 'يرجى ادخال وصف عنك',
-            'tweeter.url' => 'يرجى ادخال عنوان حساب تويتر بشكل صحيح ',
-            'facebook.url' => 'يرجى ادخال عنوان حساب فيسبوك بشكل صحيح ',
-            'github.url' => 'يرجى ادخال عنوان حساب جيت هب بشكل صحيح ',
-            'describe.min' => 'يجب ان يكون الوصف اكثر  من 70 حرف',
+            'phone.numeric' => 'يرجى ادخال رقم  ',
+            'phone.min' => '  لا يقل رقم التلفون عن 9 أرقام  ',
+            'phone.max' => '  لا يزيد رقم التلفون عن 14 أرقام  ',
+            'birth_date.required' => '  يجب ادخال تأريخ الميلاد ',
+
+            'country.required' => 'يرجى ادخال الدولة ',
+            'role.required' => 'يرجى ادخال نوع الاستخدام ',
+            // 'describe.required' => 'يرجى ادخال وصف عنك',
+            // 'tweeter.url' => 'يرجى ادخال عنوان حساب تويتر بشكل صحيح ',
+            // 'facebook.url' => 'يرجى ادخال عنوان حساب فيسبوك بشكل صحيح ',
+            // 'github.url' => 'يرجى ادخال عنوان حساب جيت هب بشكل صحيح ',
+            // 'describe.min' => 'يجب ان يكون الوصف اكثر  من 70 حرف',
             'phone.required' => ' يرجى ادخال رقم التلفون بشكل صحيح حجمه 14رقم   ',
         ]);
-        if ($request->image) {
+
+        if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
-        } else {
-            $imageName = $request->imageold;
+            user::where('id', Auth::user()->id)->update(['name' => $request->name, 'image' => $imageName]);
         }
-        user::where('id', Auth::user()->id)->update(['name' => $request->name, 'image' => $imageName]);
+
         Profile::where('id', $id)->update([
             'phone' => $request->phone, 'gander' => $request->gander, 'birth_date' => $request->birth_date,
             'country' => $request->country, 'major' => $request->major, 'user_id' => Auth::user()->id,
             'Job_title' => $request->Job_title, 'facebook' => $request->facebook, 'tweeter' => $request->tweeter, 'github' => $request->github, 'description' => $request->describe
         ]);
-        if ($request->has('skills')) {
-            userSkill::where('user_id', Auth::user()->id)->delete();
-            foreach ($request->skills as $skill) {
-                $userSkill = new userSkill;
-                $userSkill->user_id = Auth::user()->id;
-                $userSkill->skill_id = $skill;
-                $userSkill->save();
-            }
-            if (Auth::check()) {
-                $data = ['receiver_id' => Auth::user()->id, 'sender_id' => Auth::user()->id, 'title' => 'title of notify', 'is_read' => 0, 'message' => 'لقد قمت بتعديل ملفك الشخصي', 'link' => '/home'];
+        if ($request->skills[0] != '') {
+            if ($request->has('skills')) {
+                userSkill::where('user_id', Auth::user()->id)->delete();
+                foreach ($request->skills as $skill) {
+                    $userSkill = new userSkill;
+                    $userSkill->user_id = Auth::user()->id;
+                    $userSkill->skill_id = $skill;
+                    $userSkill->save();
+                }
 
-                NotificationController::hiNotification($data);
+                // if (Auth::check()) {
+                //     $data = ['receiver_id' => Auth::user()->id, 'sender_id' => Auth::user()->id, 'title' => 'title of notify', 'is_read' => 0, 'message' => 'لقد قمت بتعديل ملفك الشخصي', 'link' => '/home'];
+
+                //     NotificationController::hiNotification($data);
+                // }
             }
         }
         return redirect('profiles/' . Auth::user()->id)->with('success', 'تم تعديل الملف الشخصي ');

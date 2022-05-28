@@ -30,7 +30,32 @@ class ProjectController extends Controller
    */
   public function index()
   {
-    $data = Project::with(['sal_created_by', 'sal_skills_by.sal_skill'])->where('status', 1)->paginate(4);
+    $data = Project::with(['sal_created_by', 'sal_skills_by.sal_skill'])->where('status', 1)->paginate(6);
+    foreach ($data as $project) {
+
+      $currentDate = strtotime(\Carbon\Carbon::now()); //'2022-05-5'
+      $oldDate = strtotime($project->created_at);
+      $deference = $currentDate - $oldDate;
+      //    echo $deference;
+      $days = floor($deference / (60 * 60 * 24));
+      $hours = floor($deference / (60 * 60));
+      $minutes = floor($deference / 60);
+      $seconds = floor($deference / 60);
+      $time = '';
+      if ($days > 0) {
+        $time = $days . ' يوم ';
+      } elseif ($hours > 0) {
+        $time = $hours . ' ساعة ';
+      } elseif ($minutes > 0) {
+        $time = $minutes . ' دقيقة ';
+      } else {
+        $time =  $seconds . ' ثانية ';
+      };
+      $project['time'] = $time;
+      // return response($project['time']);
+    }
+    // return response($data['time']);
+    // return response($data);
     return view('website.users.project.index', compact('data'));
   }
 

@@ -5,7 +5,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 <link rel="stylesheet" href="{{ asset('auth_assets/project_assests/css/style.css ') }}">
-@extends("website.layouts.master")
+@extends('website.layouts.master')
 
 @section('content')
     <div class="loginContainer_2 sign-up-container up">
@@ -24,7 +24,8 @@
                                     </div>
                                     {{-- /update_project/{{$data['id']}} --}}
                                     <form method="POST" class='d-grid gap-4'
-                                        action="{{ route('projects.update', $data['id']) }}" enctype="multipart/form-data">
+                                        action="{{ route('projects.update', $data['id']) }}"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         @method('PATCH')
                                         <div class="user-box mt-3 d-grid gap-4">
@@ -47,10 +48,11 @@
 
                                             <label> المهارات </label>
                                             <div class="w-100">
-                                                <select class="selectpicker w-100" name="skills[]" multiple
-                                                    aria-label="المهارات " data-live-search="true">
+                                                <select class="selectpicker w-100" title="Choose one of the following..."
+                                                    name="skills[]" multiple aria-label="المهارات " data-live-search="true">
                                                     @foreach ($skills as $skill)
-                                                        <option value="{{ $skill['id'] }}">{{ $skill['title'] }}</option>
+                                                        <option value="{{ $skill['id'] }}">{{ $skill['title'] }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -63,9 +65,8 @@
                                         <div class="user-box mt-2 d-grid gap-4">
 
                                             <label> تفاصيل المشروع </label>
-                                            <textarea id="face" name="description" type="text" class="form-control" rows="6">
-                                           {{ $data['description'] }}
-                                            </textarea>
+                                            <textarea id="face" name="description" type="text" class="form-control"
+                                                rows="6">{{ $data['description'] }}</textarea>
                                             @error('description')
                                                 <small class="text-danger">{{ $message }}*</small>
                                             @enderror

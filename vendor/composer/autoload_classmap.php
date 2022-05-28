@@ -22,7 +22,7 @@ return array(
     'App\\Http\\Controllers\\admin\\SeekerController' => $baseDir . '/app/Http/Controllers/admin/SeekerController.php',
     'App\\Http\\Controllers\\admin\\SkillController' => $baseDir . '/app/Http/Controllers/admin/SkillController.php',
     'App\\Http\\Controllers\\admin\\UserController' => $baseDir . '/app/Http/Controllers/admin/UserController.php',
-    'App\\Http\\Controllers\\admin\\WalletController' => $baseDir . '/app/Http/Controllers/admin/WalletController.php',
+    'App\\Http\\Controllers\\admin\\WalletadminController' => $baseDir . '/app/Http/Controllers/admin/WalletadminController.php',
     'App\\Http\\Controllers\\admin\\offersController' => $baseDir . '/app/Http/Controllers/admin/offersController.php',
     'App\\Http\\Controllers\\reportsController' => $baseDir . '/app/Http/Controllers/reportsController.php',
     'App\\Http\\Controllers\\website\\OfferController' => $baseDir . '/app/Http/Controllers/website/OfferController.php',
